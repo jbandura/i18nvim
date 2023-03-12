@@ -12,8 +12,17 @@ local function get_visual_selection()
 end
 
 local function get_key_name()
-  vim.api.nvim_eval('execute(":silent normal! vi\'")')
-  return get_visual_selection()
+  if vim.bo.filetype == "handlebars" then
+    -- here's a problem
+    --stylua: ignore
+    vim.cmd('normal! vi\"')
+  else
+    vim.api.nvim_eval('execute(":silent normal! vi\'")')
+  end
+  local selection = get_visual_selection()
+
+  print(selection)
+  return selection
 end
 
 return {

@@ -1,6 +1,8 @@
 local json = require("json")
 local popup = require("plenary.popup")
 local utils = require("utils")
+local builtin = require("telescope.builtin")
+local lga_actions = require("telescope-live-grep-args.actions")
 
 local cacheDir = os.getenv("HOME") .. "/.cache/i18nvim/"
 local tmpPath = cacheDir .. "tmp/"
@@ -73,7 +75,9 @@ local function go_to_definition()
   vim.cmd("ij " .. key_name)
 end
 
-local function find_usages()
+local function show_usages()
+  vim.api.nvim_eval('execute(":silent normal! ^vc:")')
+  builtin.grep_string({ search = utils.get_visual_selection() })
 end
 
 local function show()
@@ -102,5 +106,5 @@ return {
   show = show,
   build_cache = build_cache,
   go_to_definition = go_to_definition,
-  find_usages = find_usages,
+  show_usages = show_usages,
 }
