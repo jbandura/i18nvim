@@ -22,7 +22,7 @@ local function build_cache()
   print("Building translation cache...")
 
   local result = vim.fn.systemlist("ack -f | ack /" .. localeFileName)
-  local lookupTable = {}
+  local lookup_table = {}
   for _, filePath in ipairs(result) do
     -- convert file to json, store in tmp
     convert_to_json_store_in_tmp(filePath)
@@ -34,18 +34,19 @@ local function build_cache()
 
     if type(decoded_json) == "table" then
       for translationKey, translationText in pairs(decoded_json) do
-        lookupTable[translationKey] = { text = translationText, file = filePath }
+        lookup_table[translationKey] = { text = translationText, file = filePath }
       end
     end
   end
 
   local file = io.open(translationTableFilePath, "w")
-  local encodedTable = json.encode(lookupTable)
+  local encodedTable = json.encode(lookup_table)
   file:write(encodedTable)
   io.close(file)
 
+  clear_tmp_folder()
   print("Translation cache built successfully!")
-  return lookupTable
+  return lookup_table
 end
 
 local function load_translation_files()
@@ -64,13 +65,21 @@ local function load_translation_files()
   return build_cache()
 end
 
+local function go_to_definition()
+  local lookup_table = load_translation_files()
+  local key_name = utils.get_key_name()
+  local translation = lookup_table[key_name]
+  vim.cmd("e " .. translation.file)
+  vim.cmd("ij " .. key_name)
+end
+
+local function find_usages()
+end
+
 local function show()
-  local lookupTable = load_translation_files()
-  api.nvim_eval('execute(":silent normal! vi\'")')
-  local r, c = unpack(api.nvim_win_get_cursor(0))
-  local currentWord = utils.get_visual_selection()
+  local lookup_table = load_translation_files()
+  local translation = lookup_table[utils.get_key_name()]
   local currentWindow = api.nvim_get_current_win()
-  local translation = lookupTable[currentWord]
 
   if translation then
     local win_id = popup.create({ translation.text }, {})
@@ -92,4 +101,6 @@ end
 return {
   show = show,
   build_cache = build_cache,
+  go_to_definition = go_to_definition,
+  find_usages = find_usages,
 }

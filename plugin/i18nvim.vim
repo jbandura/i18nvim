@@ -11,6 +11,11 @@ function! I18nvimBuildCache()
   lua require('i18nvim').build_cache()
 endfunction
 
+function! I18nvimGoToDefinition()
+  lua for k in pairs(package.loaded) do if k:match("^i18nvim") then package.loaded[k] = nil end end
+  lua require('i18nvim').go_to_definition()
+endfunction
+
 let &cpo = s:save_cpo
 unlet s:save_cpo
 
