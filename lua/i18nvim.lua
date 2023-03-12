@@ -2,7 +2,6 @@ local json = require("json")
 local popup = require("plenary.popup")
 local utils = require("utils")
 local builtin = require("telescope.builtin")
-local lga_actions = require("telescope-live-grep-args.actions")
 
 local cacheDir = os.getenv("HOME") .. "/.cache/i18nvim/"
 local tmpPath = cacheDir .. "tmp/"
@@ -76,7 +75,7 @@ local function go_to_definition()
 end
 
 local function show_usages()
-  vim.api.nvim_eval('execute(":silent normal! ^vc:")')
+  vim.api.nvim_eval('execute(":silent normal! ^vt:")')
   builtin.grep_string({ search = utils.get_visual_selection() })
 end
 
@@ -86,7 +85,12 @@ local function show()
   local currentWindow = api.nvim_get_current_win()
 
   if translation then
-    local win_id = popup.create({ translation.text }, {})
+    local win_id = popup.create({ translation.text }, {
+      line = "cursor",
+      col = "cursor",
+      -- above/right/below/left
+      padding = { 0, 2, 0, 2 },
+    })
     api.nvim_set_current_win(currentWindow)
     api.nvim_create_augroup("TranslationPopup", {})
     api.nvim_create_autocmd("CursorMoved", {

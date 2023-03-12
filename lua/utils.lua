@@ -21,7 +21,6 @@ local function get_key_name()
   end
   local selection = get_visual_selection()
 
-  print(selection)
   return selection
 end
 
