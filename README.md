@@ -25,3 +25,24 @@ brew install yq
 ```sh
 brew install ack
 ```
+
+## Running
+Show translation for the key under cursor:
+```vim
+:call I18nvimShowTranslation()
+```
+
+Build cache of translation keys:
+```vim
+:call I18nvimBuildCache()
+```
+
+Open a file the translation keys lives in:
+```vim
+:call I18nvimGoToDefinition()
+```
+
+Show usages of the current key:
+```vim
+:call I18nvimShowUsages()
+```
